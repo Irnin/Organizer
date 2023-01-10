@@ -1,43 +1,34 @@
 package irnin.controlers;
 
-import irnin.organizer.QueryExecutor;
-import javafx.event.ActionEvent;
+import irnin.organizer.Main;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.IOException;
 
-public class MainController {
+public class  MainController {
     @FXML
-    private Label welcomeText;
-    @FXML
-    private TextField email;
-    @FXML
-    private PasswordField password;
+    private StackPane mainStackPane;
 
-    @FXML
-    void login(ActionEvent e){
-        Connection connection = null;
-        String userLogin = email.getText();
-        String userPassword = password.getText();
-        String query = "SELECT * FROM employees WHERE userName = '" + userLogin + "' AND password = '" + userPassword + "'";
-
+    public void initialize() {
+        loadLoginScreen();
+    }
+    public void loadLoginScreen() {
         try {
-            ResultSet result = QueryExecutor.executeSelect(query);
-
-            result.next();
-            String userEmail = result.getString("email");
-
-            System.out.println(userEmail);
-        } catch (SQLException er)
-        {
-            er.printStackTrace();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("LoginView.fxml"));
+            Pane pane = fxmlLoader.load();
+            LoginController loginController = fxmlLoader.getController();
+            loginController.setMainController(this);
+            setScreen(pane);
+        } catch (IOException IOe) {
+            IOe.printStackTrace();
         }
+    }
 
+    public void setScreen(Pane pane) {
+        mainStackPane.getChildren().clear();
+        mainStackPane.getChildren().add(pane);
     }
 }
