@@ -15,7 +15,6 @@ public class QueryExecutor {
         }
         catch (SQLException e) {
             throw new RuntimeException((e.getMessage()));
-
         }
     }
 

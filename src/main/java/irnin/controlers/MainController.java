@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -20,12 +22,13 @@ public class MainController {
 
     @FXML
     void login(ActionEvent e){
-        System.out.println("Login");
-        System.out.println("Password: " + email.getText());
-        System.out.println("Login: " + password.getText());
+        Connection connection = null;
+        String userLogin = email.getText();
+        String userPassword = password.getText();
+        String query = "SELECT * FROM employees WHERE userName = '" + userLogin + "' AND password = '" + userPassword + "'";
 
         try {
-            ResultSet result = QueryExecutor.executeSelect("SELECT * FROM bies.users");
+            ResultSet result = QueryExecutor.executeSelect(query);
 
             result.next();
             String userEmail = result.getString("email");
@@ -35,7 +38,6 @@ public class MainController {
         {
             er.printStackTrace();
         }
-
 
     }
 }

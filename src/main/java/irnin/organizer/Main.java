@@ -6,8 +6,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Main extends Application {
     @Override
@@ -20,7 +23,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-
         launch();
     }
 }
