@@ -6,25 +6,32 @@ import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextInputDialog;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static java.lang.String.valueOf;
+
 public class ProgramController {
     @FXML
     private ListView<String> groupsList;
-
     @FXML
-    private Label groupNameLabel;
+    private Button removeGroup;
+    @FXML
+    private Label debug;
     private MainController mainController;
     public User user;
+
+    //Grupy
+    private int groupId;
+    private int groupOwnerId;
+    private int selectedGroupId;
+    private int groupMenuId;
+
     public void logOut(){
         mainController.loadLoginScreen();
     }
@@ -71,6 +78,7 @@ public class ProgramController {
                 query = String.format("INSERT INTO groupAssignment VALUES (null, %d, %d)", RS1.getInt("id"), user.id);
                 QueryExecutor.executeQuery(query);
 
+                groupsList.getItems().add(gropuName.get());
             }
             else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -83,6 +91,17 @@ public class ProgramController {
         }
     }
 
+    public void removeGroup()
+    {
+        String query = String.format("DELETE FROM groupAssignment WHERE groupId = %d", groupId);
+        QueryExecutor.executeQuery(query);
+
+        query = String.format("DELETE FROM groups WHERE id = %d", groupId);
+        QueryExecutor.executeQuery(query);
+
+        groupsList.getItems().remove(groupMenuId);
+    }
+
     private void reload()
     {
         for(Group group : user.userGroups) {
@@ -93,7 +112,26 @@ public class ProgramController {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 String name = groupsList.getSelectionModel().getSelectedItem();
-                groupNameLabel.setText("Nazwa grupy: " + name);
+
+                removeGroup.setVisible(false);
+
+                String query = String.format("SELECT id, name, ownerId FROM groups WHERE name = '%s'", name);
+                ResultSet RS = QueryExecutor.executeSelect(query);
+                try {
+                    RS.next();
+                    groupId = RS.getInt("id");
+                    groupOwnerId = RS.getInt("ownerId");
+                    groupMenuId = groupsList.getSelectionModel().getSelectedIndex();
+
+                    debug.setText(valueOf(groupMenuId));
+
+                    if(RS.getInt("ownerId") == user.id) {
+                        removeGroup.setVisible(true);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
     }

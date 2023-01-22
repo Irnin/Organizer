@@ -11,4 +11,11 @@ public class Group {
         this.name = name;
         this.ownerId = ownerId;
     }
+
+    public void updateData(int id, String name, int ownerId)
+    {
+        this.id = id;
+        this.name = name;
+        this.ownerId = ownerId;
+    }
 }

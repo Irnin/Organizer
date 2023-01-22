@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
    <children>
@@ -26,9 +27,18 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ListView fx:id="groupsList" layoutX="14.0" layoutY="14.0" prefHeight="310.0" prefWidth="200.0" />
-                        <Label fx:id="groupNameLabel" layoutX="222.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Nazwa grupy:" />
-                        <Button fx:id="addGroup" layoutX="122.0" layoutY="329.0" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="92.0" text="Dodaj grupę" />
+                        <ListView fx:id="groupsList" layoutX="14.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
+                        <Label fx:id="groupNameLabel" layoutX="441.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Opcje:" />
+                        <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="67.0" text="Grupy:" />
+                        <ListView fx:id="usersList" layoutX="225.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
+                        <Label layoutX="225.0" layoutY="14.0" text="Użytkownicy:" />
+                        <VBox layoutX="441.0" layoutY="40.0" prefHeight="311.0" prefWidth="142.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="addGroup" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="146.0" text="Dodaj grupę" />
+                              <Button fx:id="removeGroup" mnemonicParsing="false" onAction="#removeGroup" prefHeight="26.0" prefWidth="146.0" text="Usuń grupę" visible="false" />
+                              <Label fx:id="debug" prefHeight="17.0" prefWidth="375.0" text="DEBUG" />
+                           </children>
+                        </VBox>
                      </children></AnchorPane>
             </content>
           </Tab>
