@@ -3,6 +3,7 @@ package irnin.controlers;
 import irnin.organizer.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -28,6 +29,11 @@ public class  MainController {
     }
 
     public void setScreen(Pane pane) {
+        mainStackPane.getChildren().clear();
+        mainStackPane.getChildren().add(pane);
+    }
+
+    public void setScreen(TabPane pane) {
         mainStackPane.getChildren().clear();
         mainStackPane.getChildren().add(pane);
     }

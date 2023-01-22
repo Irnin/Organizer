@@ -1,4 +1,5 @@
 package irnin.organizer;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,11 +16,8 @@ public class DbConnector {
 
 
         try {
-
             connection = DriverManager.getConnection(url, info);
-            System.out.println("Połączono");
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

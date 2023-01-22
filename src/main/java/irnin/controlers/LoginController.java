@@ -11,6 +11,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,21 +27,43 @@ public class LoginController {
     private PasswordField password;
     private MainController mainController;
 
+    private String hash(String inputPassword) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+            byte[] messageDigest = md.digest(inputPassword.getBytes());
+
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            String hashedPassword = no.toString(16);
+
+            while (hashedPassword.length() < 32) {
+                hashedPassword = "0" + hashedPassword;
+            }
+
+            return hashedPassword;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @FXML
-    void login(ActionEvent e){
+    public void onEnter(ActionEvent ae){
+        login(ae);
+    }
+
+    @FXML
+    void login(ActionEvent e) {
         Connection connection = null;
+
         String userLogin = email.getText();
-        String userPassword = password.getText();
-        String query = "SELECT * FROM employees WHERE userName = '" + userLogin + "' AND password = '" + userPassword + "'";
+        String userPassword = hash(password.getText());
 
         try {
+            String query = "SELECT * FROM employees WHERE userName = '" + userLogin + "' AND password = '" + userPassword + "'";
             ResultSet result = QueryExecutor.executeSelect(query);
 
             result.next();
-            String userEmail = result.getString("email");
-
-            System.out.println(userEmail);
 
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ProgramView.fxml"));
@@ -51,8 +76,7 @@ public class LoginController {
                 IOe.printStackTrace();
             }
 
-        } catch (SQLException er)
-        {
+        } catch (SQLException er) {
             loginInfo.setText("Incorrect Login");
             er.printStackTrace();
         }
