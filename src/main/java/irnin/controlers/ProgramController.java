@@ -6,6 +6,7 @@ import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.fxml.FXML;
 
@@ -26,7 +27,9 @@ public class ProgramController {
     @FXML
     private Button addUser;
     @FXML
-    private Label debug;
+    private Button removeUser;
+    @FXML
+    private Button leftGroup;
     private MainController mainController;
     public User user;
 
@@ -121,6 +124,7 @@ public class ProgramController {
         QueryExecutor.executeQuery(query);
 
         groupsList.getItems().remove(groupMenuId);
+        usersList.getItems().clear();
     }
 
     @FXML
@@ -148,6 +152,7 @@ public class ProgramController {
             return;
         }
 
+        // Sprawdzenie, czy użytkownik nie jest już członkiem grupy
         int userId = result.getInt("id");
 
         query = String.format("SELECT e.id FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d AND userName = '%s';", groupId, userName);
@@ -169,6 +174,38 @@ public class ProgramController {
         displayUsers(groupId);
     }
 
+
+    @FXML
+    private void removeUser() throws SQLException {
+        String inputUserName = usersList.getSelectionModel().getSelectedItem();
+
+        String query = String.format("SELECT id FROM employees WHERE CONCAT(name, ' ', surname) = '%s'", inputUserName);
+        ResultSet result = QueryExecutor.executeSelect(query);
+        result.next();
+        int userId = result.getInt("id");
+
+        if(userId == groupOwnerId) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wystąpił problem");
+            alert.setHeaderText("Nie można usunąć użytkownika");
+            alert.setContentText("Nie można usunąć właściciela grupy");
+
+            alert.showAndWait();
+            return;
+        }
+
+        query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", userId, groupId);
+        QueryExecutor.executeQuery(query);
+        displayUsers(groupId);
+    }
+
+    public void leftGroup() {
+        String query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", user.id, groupId);
+        QueryExecutor.executeQuery(query);
+        groupsList.getItems().remove(groupMenuId);
+        usersList.getItems().clear();
+    }
+
     private void reload()
     {
         for(Group group : user.userGroups) {
@@ -180,8 +217,10 @@ public class ProgramController {
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 String name = groupsList.getSelectionModel().getSelectedItem();
 
-                removeGroup.setVisible(false);
-                addUser.setVisible(false);
+                removeGroup.setDisable(true);
+                addUser.setDisable(true);
+                leftGroup.setDisable(true);
+                removeUser.setDisable(true);
 
                 String query = String.format("SELECT id, name, ownerId FROM groups WHERE name = '%s'", name);
                 ResultSet RS = QueryExecutor.executeSelect(query);
@@ -191,13 +230,16 @@ public class ProgramController {
                     groupOwnerId = RS.getInt("ownerId");
                     groupMenuId = groupsList.getSelectionModel().getSelectedIndex();
 
-                    debug.setText(valueOf(groupId));
-
                     displayUsers(groupId);
 
-                    if(RS.getInt("ownerId") == user.id) {
-                        removeGroup.setVisible(true);
-                        addUser.setVisible(true);
+                    if(groupOwnerId == user.id) {
+                        removeGroup.setDisable(false);
+                        addUser.setDisable(false);
+                        removeUser.setDisable(false);
+                    }
+                    else
+                    {
+                        leftGroup.setDisable(false);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
