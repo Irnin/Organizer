@@ -35,6 +35,7 @@
                         <VBox layoutX="441.0" layoutY="40.0" prefHeight="311.0" prefWidth="142.0" spacing="5.0">
                            <children>
                               <Button fx:id="addGroup" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="146.0" text="Dodaj grupę" />
+                              <Button fx:id="addUser" mnemonicParsing="false" onAction="#addUser" prefHeight="26.0" prefWidth="146.0" text="Dodaj użytkownika" visible="false" />
                               <Button fx:id="removeGroup" mnemonicParsing="false" onAction="#removeGroup" prefHeight="26.0" prefWidth="146.0" text="Usuń grupę" visible="false" />
                               <Label fx:id="debug" prefHeight="17.0" prefWidth="375.0" text="DEBUG" />
                            </children>

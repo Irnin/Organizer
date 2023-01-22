@@ -23,7 +23,6 @@ public class User {
         String query = "SELECT g.id, g.name, g.ownerId FROM groupAssignment ga JOIN groups g ON ga.groupId = g.id WHERE ga.employeeId = " + id;
 
         ResultSet result = QueryExecutor.executeSelect(query);
-        result.next();
 
         result.beforeFirst();
 

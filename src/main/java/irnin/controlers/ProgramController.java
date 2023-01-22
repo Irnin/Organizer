@@ -20,7 +20,11 @@ public class ProgramController {
     @FXML
     private ListView<String> groupsList;
     @FXML
+    private ListView<String> usersList;
+    @FXML
     private Button removeGroup;
+    @FXML
+    private Button addUser;
     @FXML
     private Label debug;
     private MainController mainController;
@@ -52,7 +56,6 @@ public class ProgramController {
     }
 
     public void addGroup() throws SQLException {
-        boolean loop = true;
         TextInputDialog inputText = new TextInputDialog();
         inputText.setTitle("");
         inputText.setHeaderText("Tworzenie nowej grupy");
@@ -91,6 +94,24 @@ public class ProgramController {
         }
     }
 
+    private void displayUsers(int groupId)
+    {
+        usersList.getItems().clear();
+        String query = String.format("SELECT name, surname FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d", groupId);
+        ResultSet RS = QueryExecutor.executeSelect(query);
+        try {
+            RS.beforeFirst();
+
+            while(RS.next()) {
+                String userName = RS.getString("name");
+                String userSurname = RS.getString("surName");
+                usersList.getItems().add(userName + " " + userSurname);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void removeGroup()
     {
         String query = String.format("DELETE FROM groupAssignment WHERE groupId = %d", groupId);
@@ -100,6 +121,52 @@ public class ProgramController {
         QueryExecutor.executeQuery(query);
 
         groupsList.getItems().remove(groupMenuId);
+    }
+
+    @FXML
+    private void addUser() throws SQLException {
+        TextInputDialog inputText = new TextInputDialog();
+        inputText.setTitle("");
+        inputText.setHeaderText("Dodawanie nowego użytkownika");
+        inputText.setContentText("Nazwa użytkownika: ");
+
+        Optional<String> inputUserName = inputText.showAndWait();
+        String userName = inputUserName.get();
+
+        // Sprawdzenie, czy istnieje taki użytkownik
+        String query = String.format("SELECT id FROM employees e WHERE e.userName = '%s'", userName);
+        ResultSet result = QueryExecutor.executeSelect(query);
+        result.beforeFirst();
+
+        if(result.next() == false) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wystąpił problem");
+            alert.setHeaderText("Nie można dodać użytkownika");
+            alert.setContentText("Nie istnieje użytkownik z takim loginem");
+
+            alert.showAndWait();
+            return;
+        }
+
+        int userId = result.getInt("id");
+
+        query = String.format("SELECT e.id FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d AND userName = '%s';", groupId, userName);
+        result = QueryExecutor.executeSelect(query);
+        result.beforeFirst();
+
+        if(result.next() == true) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wystąpił problem");
+            alert.setHeaderText("Nie można dodać użytkownika");
+            alert.setContentText("Użytkownik już jest członkiem grupy");
+
+            alert.showAndWait();
+            return;
+        }
+
+        query = String.format("INSERT INTO groupAssignment VALUES (null, %d, %d)", groupId, userId);
+        QueryExecutor.executeQuery(query);
+        displayUsers(groupId);
     }
 
     private void reload()
@@ -114,6 +181,7 @@ public class ProgramController {
                 String name = groupsList.getSelectionModel().getSelectedItem();
 
                 removeGroup.setVisible(false);
+                addUser.setVisible(false);
 
                 String query = String.format("SELECT id, name, ownerId FROM groups WHERE name = '%s'", name);
                 ResultSet RS = QueryExecutor.executeSelect(query);
@@ -123,10 +191,13 @@ public class ProgramController {
                     groupOwnerId = RS.getInt("ownerId");
                     groupMenuId = groupsList.getSelectionModel().getSelectedIndex();
 
-                    debug.setText(valueOf(groupMenuId));
+                    debug.setText(valueOf(groupId));
+
+                    displayUsers(groupId);
 
                     if(RS.getInt("ownerId") == user.id) {
                         removeGroup.setVisible(true);
+                        addUser.setVisible(true);
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
