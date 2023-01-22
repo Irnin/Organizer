@@ -1,5 +1,6 @@
 package irnin.controlers;
 
+import irnin.classes.User;
 import irnin.organizer.Main;
 import irnin.organizer.QueryExecutor;
 import javafx.event.ActionEvent;
@@ -65,12 +66,14 @@ public class LoginController {
 
             result.next();
 
+            User user = new User(userLogin, userPassword);
+
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ProgramView.fxml"));
                 Pane pane = fxmlLoader.load();
 
                 ProgramController programController = fxmlLoader.getController();
-                programController.setMainController(mainController);
+                programController.setMainController(mainController, user);
                 mainController.setScreen(pane);
             } catch (IOException IOe) {
                 IOe.printStackTrace();

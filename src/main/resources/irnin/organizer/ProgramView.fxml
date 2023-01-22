@@ -26,8 +26,9 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ListView fx:id="groupsList" layoutX="7.0" layoutY="7.0" prefHeight="355.0" prefWidth="200.0" />
-                        <Label fx:id="groupNameLabek" layoutX="222.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Label" />
+                        <ListView fx:id="groupsList" layoutX="14.0" layoutY="14.0" prefHeight="310.0" prefWidth="200.0" />
+                        <Label fx:id="groupNameLabel" layoutX="222.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Nazwa grupy:" />
+                        <Button fx:id="addGroup" layoutX="122.0" layoutY="329.0" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="92.0" text="Dodaj grupę" />
                      </children></AnchorPane>
             </content>
           </Tab>
