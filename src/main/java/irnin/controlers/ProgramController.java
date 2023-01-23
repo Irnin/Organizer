@@ -48,8 +48,13 @@ public class ProgramController {
         this.mainController = mainController;
         this.user = user;
 
-        reload();
+        refrestGroupsData();
+        refreshToDoData();
     }
+
+    // ================================================================
+    // Zarządzanie grupami
+    // ================================================================
 
     public void addGroup() throws SQLException {
         TextInputDialog inputText = new TextInputDialog();
@@ -91,19 +96,11 @@ public class ProgramController {
         }
     }
 
-    private void displayUsers(int groupId) throws SQLException {
-        usersList.getItems().clear();
-
-        for(String user : selectedGroup.getUsers()){
-            usersList.getItems().add(user);
-        }
-    }
-
     public void removeGroup() {
         selectedGroup.removeGroup();
 
         user.userGroups.removeIf(obj -> obj.id == selectedGroup.id);
-        reload();
+        refrestGroupsData();
     }
 
     @FXML
@@ -149,9 +146,8 @@ public class ProgramController {
         }
 
         selectedGroup.addUser(userId);
-        displayUsers(selectedGroup.id);
+        displayUsersInGroup(selectedGroup.id);
     }
-
 
     @FXML
     private void removeUser() throws SQLException {
@@ -173,16 +169,17 @@ public class ProgramController {
         }
 
         selectedGroup.removeUser(userId);
-        displayUsers(selectedGroup.id);
+        displayUsersInGroup(selectedGroup.id);
     }
 
     public void leftGroup() {
         String query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", user.id, selectedGroup.id);
         QueryExecutor.executeQuery(query);
-        reload();
+        user.userGroups.removeIf(obj -> obj.id == selectedGroup.id);
+        refrestGroupsData();
     }
 
-    private void setGroupDetail(String name) {
+    private void getGroupDetail(String name) {
         for(Group group : user.userGroups){
             if(group.name == name) {
                 selectedGroup = new Group(group.id, group.name, group.ownerId);
@@ -190,21 +187,22 @@ public class ProgramController {
         }
     }
 
-    private void getGroupsDetails() {
+    // ================================================================
+    // Aktualizacja zawartości zakładek
+    // ================================================================
+    private void displayUsersInGroup(int groupId) throws SQLException {
+        usersList.getItems().clear();
+
+        for(String user : selectedGroup.getUsers()){
+            usersList.getItems().add(user);
+        }
+    }
+    private void refrestGroupsData() {
         groupsList.getItems().clear();
 
         for(Group group : user.userGroups) {
             groupsList.getItems().add(group.name);
-            toDoGroup.getItems().add(group.name);
         }
-    }
-
-    private void reload() {
-        getGroupsDetails();
-
-        toDoGroup.setOnAction((event) -> {
-            setGroupDetail((String)toDoGroup.getValue());
-        });
 
         groupsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -216,10 +214,10 @@ public class ProgramController {
                 leftGroup.setDisable(true);
                 removeUser.setDisable(true);
 
-                setGroupDetail(name);
+                getGroupDetail(name);
 
                 try {
-                    displayUsers(selectedGroup.id);
+                    displayUsersInGroup(selectedGroup.id);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -236,8 +234,14 @@ public class ProgramController {
         });
     }
 
-    private void refrestGroupsData() {
+    private void refreshToDoData() {
+        for(Group group : user.userGroups) {
+            toDoGroup.getItems().add(group.name);
+        }
 
+        toDoGroup.setOnAction((event) -> {
+            getGroupDetail((String)toDoGroup.getValue());
+        });
     }
 
     public void toDoSelectGroup(ActionEvent actionEvent) {
