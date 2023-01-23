@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,11 +35,19 @@ public class ProgramController {
     @FXML
     private Button removeToDoItem;
     @FXML
+    private Button markToDoItemComplete;
+    @FXML
     private Button removeUser;
     @FXML
     private Button leftGroup;
     @FXML
     private ComboBox toDoGroup;
+    @FXML
+    private Label completedBy;
+    @FXML
+    private Label CompletedDate;
+    @FXML
+    private VBox toDoInformation;
     private MainController mainController;
     public User user;
 
@@ -245,6 +254,12 @@ public class ProgramController {
         refreshToDoData();
     }
 
+    public void markToDoItemComplete() {
+        String itemName = toDoItemsList.getSelectionModel().getSelectedItem();
+        toDo.markItemAsComplete(selectedGroup.id, itemName, user.id);
+        refreshToDoData();
+    }
+
     // ================================================================
     // Aktualizacja zawartości zakładek
     // ================================================================
@@ -311,8 +326,11 @@ public class ProgramController {
         toDoGroup.setOnAction((event) -> {
             getGroupDetail((String)toDoGroup.getValue());
             toDoItemsList.getSelectionModel().clearSelection();
+            toDoItemsListComplete.getSelectionModel().clearSelection();
 
             removeToDoItem.setDisable(true);
+            markToDoItemComplete.setDisable(true);
+            toDoInformation.setVisible(false);
 
             try {
                 addToDoItem.setDisable(false);
@@ -329,6 +347,31 @@ public class ProgramController {
                 String name = toDoItemsList.getSelectionModel().getSelectedItem();
 
                 removeToDoItem.setDisable(false);
+                markToDoItemComplete.setDisable(false);
+                toDoInformation.setVisible(false);
+            }
+        });
+
+        // Kliknięcie na item nie kompletny
+        toDoItemsListComplete.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                String name = toDoItemsListComplete.getSelectionModel().getSelectedItem();
+
+                toDoInformation.setVisible(true);
+
+                String itemName = toDoItemsListComplete.getSelectionModel().getSelectedItem();
+
+                try {
+                    String createdDate = toDo.getCompletedDate(selectedGroup.id, itemName);
+                    String createdBy = toDo.getCompletedUserName(selectedGroup.id, itemName);
+
+                    completedBy.setText(createdBy);
+                    CompletedDate.setText(createdDate);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
     }
