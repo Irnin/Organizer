@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
    <children>
       <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -25,7 +25,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Grupy">
+          <Tab onSelectionChanged="#refrestGroupsData" text="Grupy">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -48,25 +48,24 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="Lista">
+            <Tab onSelectionChanged="#refreshToDoData" text="Lista">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="14.0" layoutY="19.0" text="Grupa" />
-                        <ListView layoutX="14.0" layoutY="74.0" prefHeight="286.0" prefWidth="200.0" />
+                        <ListView fx:id="toDoItemsList" layoutX="14.0" layoutY="74.0" prefHeight="286.0" prefWidth="200.0" />
                         <Label layoutX="14.0" layoutY="47.0" text="Do zrobienia:" />
                         <Label layoutX="232.0" layoutY="47.0" text="Ukończono:" />
-                        <ListView layoutX="232.0" layoutY="74.0" prefHeight="286.0" prefWidth="200.0" />
+                        <ListView fx:id="toDoItemsListComplete" disable="true" layoutX="232.0" layoutY="74.0" prefHeight="286.0" prefWidth="200.0" />
                         <Label layoutX="445.0" layoutY="47.0" text="Opcje:" />
-                        <VBox layoutX="445.0" layoutY="74.0" prefHeight="130.0" prefWidth="147.0" spacing="5.0">
+                        <VBox layoutX="445.0" layoutY="74.0" prefHeight="96.0" prefWidth="147.0" spacing="5.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" text="Dodaj zadanie" />
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" text="Usuń zadanie" />
+                              <Button fx:id="addToDoItem" disable="true" mnemonicParsing="false" onAction="#addToDoItem" prefHeight="26.0" prefWidth="155.0" text="Dodaj zadanie" />
+                              <Button fx:id="removeToDoItem" disable="true" mnemonicParsing="false" onAction="#removeToDoItem" prefHeight="26.0" prefWidth="155.0" text="Usuń zadanie" />
                               <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" text="Oznacz jako ukończone" />
-                              <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="155.0" text="Oznacz jako do zrobienia" />
                            </children>
                         </VBox>
-                        <Label layoutX="445.0" layoutY="209.0" text="Iformacje" />
+                        <Label layoutX="437.0" layoutY="176.0" text="Iformacje" />
                         <ComboBox fx:id="toDoGroup" layoutX="56.0" layoutY="15.0" prefWidth="150.0" />
                      </children>
                   </AnchorPane>

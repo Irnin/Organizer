@@ -2,17 +2,18 @@ package irnin.controlers;
 
 import irnin.classes.Group;
 import irnin.classes.User;
+import irnin.classes.toDo;
 import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.fxml.FXML;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public class ProgramController {
@@ -21,9 +22,17 @@ public class ProgramController {
     @FXML
     private ListView<String> usersList;
     @FXML
+    ListView<String> toDoItemsList;
+    @FXML
+    ListView<String> toDoItemsListComplete;
+    @FXML
     private Button removeGroup;
     @FXML
     private Button addUser;
+    @FXML
+    private Button addToDoItem;
+    @FXML
+    private Button removeToDoItem;
     @FXML
     private Button removeUser;
     @FXML
@@ -47,9 +56,6 @@ public class ProgramController {
     public void setMainController(MainController mainController, User user) {
         this.mainController = mainController;
         this.user = user;
-
-        refrestGroupsData();
-        refreshToDoData();
     }
 
     // ================================================================
@@ -188,6 +194,58 @@ public class ProgramController {
     }
 
     // ================================================================
+    // Zarządzanie listą To Do
+    // ================================================================
+
+    public void toDoDisplayLists() throws SQLException {
+        List<toDo> list = selectedGroup.getToDos();
+
+        toDoItemsListComplete.getItems().clear();
+        toDoItemsList.getItems().clear();
+
+        for(toDo item : list) {
+            if(item.isComplete()) {
+                toDoItemsListComplete.getItems().add(item.getSubject());
+            }
+            else {
+                toDoItemsList.getItems().add(item.getSubject());
+            }
+        }
+    }
+
+    public void addToDoItem() throws SQLException {
+        TextInputDialog inputText = new TextInputDialog();
+        inputText.setTitle("");
+        inputText.setHeaderText("Dodawanie nowej rzeczy do listy");
+        inputText.setContentText("Podaj tytuł: ");
+
+        Optional<String> inputSubject = inputText.showAndWait();
+
+        String query = String.format("SELECT id FROM toDoList WHERE groupId = %d AND subject = '%s';", selectedGroup.id, inputSubject.get());
+        ResultSet result = QueryExecutor.executeSelect(query);
+        result.beforeFirst();
+
+        if(result.next() == true) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wystąpił problem");
+            alert.setHeaderText("Nie można dodać do listy");
+            alert.setContentText("Taki wpis już istnieje");
+
+            alert.showAndWait();
+            return;
+        }
+
+        selectedGroup.addToDoItem(inputSubject.get());
+        refreshToDoData();
+    }
+
+    public void removeToDoItem() {
+        String itemName = toDoItemsList.getSelectionModel().getSelectedItem();
+        toDo.removeItem(selectedGroup.id, itemName);
+        refreshToDoData();
+    }
+
+    // ================================================================
     // Aktualizacja zawartości zakładek
     // ================================================================
     private void displayUsersInGroup(int groupId) throws SQLException {
@@ -197,6 +255,7 @@ public class ProgramController {
             usersList.getItems().add(user);
         }
     }
+    @FXML
     private void refrestGroupsData() {
         groupsList.getItems().clear();
 
@@ -234,17 +293,43 @@ public class ProgramController {
         });
     }
 
+    @FXML
     private void refreshToDoData() {
+        toDoGroup.getItems().clear();
         for(Group group : user.userGroups) {
             toDoGroup.getItems().add(group.name);
         }
 
+        if(selectedGroup != null) {
+            toDoGroup.setValue(selectedGroup.name);
+            addToDoItem.setDisable(false);
+        }
+        else {
+            addToDoItem.setDisable(true);
+        }
+
         toDoGroup.setOnAction((event) -> {
             getGroupDetail((String)toDoGroup.getValue());
+            toDoItemsList.getSelectionModel().clearSelection();
+
+            removeToDoItem.setDisable(true);
+
+            try {
+                addToDoItem.setDisable(false);
+                toDoDisplayLists();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         });
-    }
 
-    public void toDoSelectGroup(ActionEvent actionEvent) {
+        // Kliknięcie na item nie kompletny
+        toDoItemsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                String name = toDoItemsList.getSelectionModel().getSelectedItem();
 
+                removeToDoItem.setDisable(false);
+            }
+        });
     }
 }

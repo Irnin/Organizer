@@ -71,4 +71,31 @@ public class Group {
             return 1;
         }
     }
+
+    public List<toDo> getToDos() throws SQLException {
+        List<toDo> toDos = new ArrayList<toDo>();
+
+        String query = String.format("SELECT * FROM toDoList WHERE groupId = %d", id);
+        ResultSet RS = QueryExecutor.executeSelect(query);
+        RS.beforeFirst();
+
+        while(RS.next()) {
+
+            int id = RS.getInt("id");
+            int groupId = RS.getInt("groupId");
+            String subject = RS.getString("subject");
+            String status = RS.getString("status");
+            int completedBy = RS.getInt("completedBy");
+            String completedDate = RS.getString("completedDate");
+
+            toDos.add(new toDo(id, groupId, subject, status, completedBy, completedDate));
+        }
+
+        return toDos;
+    }
+
+    public void addToDoItem(String subject) {
+        String query = String.format("INSERT INTO toDoList VALUES (null, %d, '%s', 'w trakcie', null, null)", id, subject);
+        QueryExecutor.executeQuery(query);
+    }
 }
