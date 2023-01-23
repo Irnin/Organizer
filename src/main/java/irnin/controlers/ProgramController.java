@@ -33,15 +33,10 @@ public class ProgramController {
     private MainController mainController;
     public User user;
 
-    //Grupy
-    private int groupId;
-    private int groupOwnerId;
-    private int selectedGroupId;
-    private int groupMenuId;
-
     private Group selectedGroup;
 
     public void logOut(){
+
         mainController.loadLoginScreen();
     }
 
@@ -82,6 +77,7 @@ public class ProgramController {
                 query = String.format("INSERT INTO groupAssignment VALUES (null, %d, %d)", RS1.getInt("id"), user.id);
                 QueryExecutor.executeQuery(query);
 
+                user.userGroups.add(new Group(gropuName.get()));
                 groupsList.getItems().add(gropuName.get());
             }
             else {
@@ -97,28 +93,17 @@ public class ProgramController {
 
     private void displayUsers(int groupId) throws SQLException {
         usersList.getItems().clear();
-        String query = String.format("SELECT name, surname FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d", groupId);
-        ResultSet RS = QueryExecutor.executeSelect(query);
-        RS.beforeFirst();
 
-        while(RS.next()) {
-            String userName = RS.getString("name");
-            String userSurname = RS.getString("surName");
-            usersList.getItems().add(userName + " " + userSurname);
+        for(String user : selectedGroup.getUsers()){
+            usersList.getItems().add(user);
         }
     }
 
-    public void removeGroup()
-    {
-        String query = String.format("DELETE FROM groupAssignment WHERE groupId = %d", groupId);
-        QueryExecutor.executeQuery(query);
+    public void removeGroup() {
+        selectedGroup.removeGroup();
 
-        query = String.format("DELETE FROM groups WHERE id = %d", groupId);
-        QueryExecutor.executeQuery(query);
-
-        user.userGroups.removeIf(obj -> obj.id == groupId);
-        groupsList.getItems().remove(groupMenuId);
-        usersList.getItems().clear();
+        user.userGroups.removeIf(obj -> obj.id == selectedGroup.id);
+        reload();
     }
 
     @FXML
@@ -149,7 +134,7 @@ public class ProgramController {
         // Sprawdzenie, czy użytkownik nie jest już członkiem grupy
         int userId = result.getInt("id");
 
-        query = String.format("SELECT e.id FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d AND userName = '%s';", groupId, userName);
+        query = String.format("SELECT e.id FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d AND userName = '%s';", selectedGroup.id, userName);
         result = QueryExecutor.executeSelect(query);
         result.beforeFirst();
 
@@ -163,9 +148,8 @@ public class ProgramController {
             return;
         }
 
-        query = String.format("INSERT INTO groupAssignment VALUES (null, %d, %d)", groupId, userId);
-        QueryExecutor.executeQuery(query);
-        displayUsers(groupId);
+        selectedGroup.addUser(userId);
+        displayUsers(selectedGroup.id);
     }
 
 
@@ -178,7 +162,7 @@ public class ProgramController {
         result.next();
         int userId = result.getInt("id");
 
-        if(userId == groupOwnerId) {
+        if(userId == selectedGroup.ownerId) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Wystąpił problem");
             alert.setHeaderText("Nie można usunąć użytkownika");
@@ -188,16 +172,14 @@ public class ProgramController {
             return;
         }
 
-        query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", userId, groupId);
-        QueryExecutor.executeQuery(query);
-        displayUsers(groupId);
+        selectedGroup.removeUser(userId);
+        displayUsers(selectedGroup.id);
     }
 
     public void leftGroup() {
-        String query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", user.id, groupId);
+        String query = String.format("DELETE FROM groupAssignment WHERE employeeId = %d AND groupId = %d", user.id, selectedGroup.id);
         QueryExecutor.executeQuery(query);
-        groupsList.getItems().remove(groupMenuId);
-        usersList.getItems().clear();
+        reload();
     }
 
     private void setGroupDetail(String name) {
@@ -208,11 +190,17 @@ public class ProgramController {
         }
     }
 
-    private void reload(){
+    private void getGroupsDetails() {
+        groupsList.getItems().clear();
+
         for(Group group : user.userGroups) {
             groupsList.getItems().add(group.name);
             toDoGroup.getItems().add(group.name);
         }
+    }
+
+    private void reload() {
+        getGroupsDetails();
 
         toDoGroup.setOnAction((event) -> {
             setGroupDetail((String)toDoGroup.getValue());
@@ -228,31 +216,28 @@ public class ProgramController {
                 leftGroup.setDisable(true);
                 removeUser.setDisable(true);
 
-                String query = String.format("SELECT id, name, ownerId FROM groups WHERE name = '%s'", name);
-                ResultSet RS = QueryExecutor.executeSelect(query);
+                setGroupDetail(name);
+
                 try {
-                    RS.next();
-                    groupId = RS.getInt("id");
-                    groupOwnerId = RS.getInt("ownerId");
-                    groupMenuId = groupsList.getSelectionModel().getSelectedIndex();
-
-                    displayUsers(groupId);
-
-                    if(groupOwnerId == user.id) {
-                        removeGroup.setDisable(false);
-                        addUser.setDisable(false);
-                        removeUser.setDisable(false);
-                    }
-                    else
-                    {
-                        leftGroup.setDisable(false);
-                    }
+                    displayUsers(selectedGroup.id);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
 
+                if(selectedGroup.ownerId == user.id) {
+                    removeGroup.setDisable(false);
+                    addUser.setDisable(false);
+                    removeUser.setDisable(false);
+                }
+                else {
+                    leftGroup.setDisable(false);
+                }
             }
         });
+    }
+
+    private void refrestGroupsData() {
+
     }
 
     public void toDoSelectGroup(ActionEvent actionEvent) {
