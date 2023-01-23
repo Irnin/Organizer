@@ -15,8 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import static java.lang.String.valueOf;
-
 public class ProgramController {
     @FXML
     private ListView<String> groupsList;
@@ -30,6 +28,8 @@ public class ProgramController {
     private Button removeUser;
     @FXML
     private Button leftGroup;
+    @FXML
+    private ComboBox toDoGroup;
     private MainController mainController;
     public User user;
 
@@ -39,16 +39,14 @@ public class ProgramController {
     private int selectedGroupId;
     private int groupMenuId;
 
+    private Group selectedGroup;
+
     public void logOut(){
         mainController.loadLoginScreen();
     }
 
     public void exit(){
         Platform.exit();
-    }
-
-    public void initialize() {
-
     }
 
     public void setMainController(MainController mainController, User user) {
@@ -97,21 +95,16 @@ public class ProgramController {
         }
     }
 
-    private void displayUsers(int groupId)
-    {
+    private void displayUsers(int groupId) throws SQLException {
         usersList.getItems().clear();
         String query = String.format("SELECT name, surname FROM employees e JOIN groupAssignment gA on e.id = gA.employeeId WHERE gA.groupId = %d", groupId);
         ResultSet RS = QueryExecutor.executeSelect(query);
-        try {
-            RS.beforeFirst();
+        RS.beforeFirst();
 
-            while(RS.next()) {
-                String userName = RS.getString("name");
-                String userSurname = RS.getString("surName");
-                usersList.getItems().add(userName + " " + userSurname);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        while(RS.next()) {
+            String userName = RS.getString("name");
+            String userSurname = RS.getString("surName");
+            usersList.getItems().add(userName + " " + userSurname);
         }
     }
 
@@ -123,6 +116,7 @@ public class ProgramController {
         query = String.format("DELETE FROM groups WHERE id = %d", groupId);
         QueryExecutor.executeQuery(query);
 
+        user.userGroups.removeIf(obj -> obj.id == groupId);
         groupsList.getItems().remove(groupMenuId);
         usersList.getItems().clear();
     }
@@ -206,11 +200,23 @@ public class ProgramController {
         usersList.getItems().clear();
     }
 
-    private void reload()
-    {
+    private void setGroupDetail(String name) {
+        for(Group group : user.userGroups){
+            if(group.name == name) {
+                selectedGroup = new Group(group.id, group.name, group.ownerId);
+            }
+        }
+    }
+
+    private void reload(){
         for(Group group : user.userGroups) {
             groupsList.getItems().add(group.name);
+            toDoGroup.getItems().add(group.name);
         }
+
+        toDoGroup.setOnAction((event) -> {
+            setGroupDetail((String)toDoGroup.getValue());
+        });
 
         groupsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -247,5 +253,9 @@ public class ProgramController {
 
             }
         });
+    }
+
+    public void toDoSelectGroup(ActionEvent actionEvent) {
+
     }
 }
