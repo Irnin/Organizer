@@ -4,12 +4,18 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
    <children>
@@ -80,8 +86,108 @@
                   </AnchorPane>
                </content>
             </Tab>
+            <Tab onSelectionChanged="#refreshCalendarData" text="Kalendarz">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <GridPane layoutX="11.0" layoutY="52.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="50.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="122.0" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="56.0" text="Pon" textAlignment="CENTER" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="62.0" text="Wt" GridPane.columnIndex="1" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="70.0" text="Śr" GridPane.columnIndex="2" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="80.0" text="Czw" GridPane.columnIndex="3" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="68.0" text="Pt" GridPane.columnIndex="4" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="85.0" text="Sob" GridPane.columnIndex="5" />
+                              <Label prefHeight="17.0" prefWidth="83.0" text="Niedz" GridPane.columnIndex="6" />
+                              <Button fx:id="bc1" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="1" GridPane.rowIndex="1" />
+                              <Button fx:id="bc2" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Button fx:id="bc3" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="3" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Button fx:id="bc4" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="4" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Button fx:id="bc5" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="5" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <Button fx:id="bc6" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="6" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <Button fx:id="bc7" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="7" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                              <Button fx:id="bc8" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="8" GridPane.rowIndex="2" />
+                              <Button fx:id="bc9" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="9" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Button fx:id="bc10" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="10" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <Button fx:id="bc11" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="11" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                              <Button fx:id="bc12" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="12" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                              <Button fx:id="bc13" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="13" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                              <Button fx:id="bc14" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="14" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+                              <Button fx:id="bc15" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="15" GridPane.rowIndex="3" />
+                              <Button fx:id="bc16" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="16" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Button fx:id="bc17" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="17" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <Button fx:id="bc18" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="18" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                              <Button fx:id="bc19" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="19" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                              <Button fx:id="bc20" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="20" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                              <Button fx:id="bc21" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="21" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+                              <Button fx:id="bc22" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="22" GridPane.rowIndex="4" />
+                              <Button fx:id="bc23" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="23" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Button fx:id="bc24" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="24" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                              <Button fx:id="bc25" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="25" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                              <Button fx:id="bc26" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="26" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                              <Button fx:id="bc27" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="27" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                              <Button fx:id="bc28" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="28" GridPane.columnIndex="6" GridPane.rowIndex="4" />
+                              <Button fx:id="bc29" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="29" GridPane.rowIndex="5" />
+                              <Button fx:id="bc30" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="30" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Button fx:id="bc31" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="31" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                              <Button fx:id="bc32" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="32" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                              <Button fx:id="bc33" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="33" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                              <Button fx:id="bc34" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="34" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+                              <Button fx:id="bc35" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="35" GridPane.columnIndex="6" GridPane.rowIndex="5" />
+                              <Button fx:id="bc36" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="36" GridPane.rowIndex="6" />
+                              <Button fx:id="bc37" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="37" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Button fx:id="bc38" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="38" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                              <Button fx:id="bc39" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="39" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                              <Button fx:id="bc40" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="40" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                              <Button fx:id="bc41" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="41" GridPane.columnIndex="5" GridPane.rowIndex="6" />
+                              <Button fx:id="bc42" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="42" GridPane.columnIndex="6" GridPane.rowIndex="6" />
+                           </children>
+                        </GridPane>
+                        <HBox layoutX="14.0" layoutY="274.0" prefHeight="81.0" prefWidth="340.0">
+                           <children>
+                              <Button mnemonicParsing="false" text="Dodaj wydarzenie" />
+                           </children>
+                        </HBox>
+                        <ScrollPane fx:id="eventsList" hbarPolicy="NEVER" layoutX="386.0" layoutY="18.0" prefHeight="344.0" prefWidth="200.0" vbarPolicy="ALWAYS" />
+                        <Button layoutX="14.0" layoutY="16.0" mnemonicParsing="false" onAction="#subtractMonth" text="&lt;=" />
+                        <Button layoutX="338.0" layoutY="16.0" mnemonicParsing="false" onAction="#addMonth" text="=&gt;" />
+                        <HBox alignment="CENTER" layoutX="85.0" layoutY="14.0" prefHeight="25.0" prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="calendarYear" text="Rok">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="calendarMonth" alignment="CENTER" contentDisplay="CENTER" text="Miesiąc" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
-      <Button layoutX="-91.0" layoutY="-82.0" mnemonicParsing="false" text="Button" />
    </children>
 </Pane>

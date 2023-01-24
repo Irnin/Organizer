@@ -1,5 +1,6 @@
 package irnin.controlers;
 
+import irnin.classes.Cal;
 import irnin.classes.Group;
 import irnin.classes.User;
 import irnin.classes.toDo;
@@ -7,6 +8,7 @@ import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -14,42 +16,77 @@ import javafx.scene.layout.VBox;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class ProgramController {
-    @FXML
-    private ListView<String> groupsList;
-    @FXML
-    private ListView<String> usersList;
-    @FXML
-    ListView<String> toDoItemsList;
-    @FXML
-    ListView<String> toDoItemsListComplete;
-    @FXML
-    private Button removeGroup;
-    @FXML
-    private Button addUser;
-    @FXML
-    private Button addToDoItem;
-    @FXML
-    private Button removeToDoItem;
-    @FXML
-    private Button markToDoItemComplete;
-    @FXML
-    private Button removeUser;
-    @FXML
-    private Button leftGroup;
-    @FXML
-    private ComboBox toDoGroup;
-    @FXML
-    private Label completedBy;
-    @FXML
-    private Label CompletedDate;
-    @FXML
-    private VBox toDoInformation;
+    @FXML private ListView<String> groupsList;
+    @FXML private ListView<String> usersList;
+    @FXML ListView<String> toDoItemsList;
+    @FXML ListView<String> toDoItemsListComplete;
+    @FXML private Button removeGroup;
+    @FXML private Button addUser;
+    @FXML private Button addToDoItem;
+    @FXML private Button removeToDoItem;
+    @FXML private Button markToDoItemComplete;
+    @FXML private Button removeUser;
+    @FXML private Button leftGroup;
+    @FXML private ComboBox toDoGroup;
+    @FXML private Label completedBy;
+    @FXML private Label CompletedDate;
+    @FXML private Label calendarMonth;
+    @FXML private Label calendarYear;
+    @FXML private VBox toDoInformation;
     private MainController mainController;
     public User user;
+    private Cal calendar;
+
+    @FXML private Button bc1;
+    @FXML private Button bc2;
+    @FXML private Button bc3;
+    @FXML private Button bc4;
+    @FXML private Button bc5;
+    @FXML private Button bc6;
+    @FXML private Button bc7;
+    @FXML private Button bc8;
+    @FXML private Button bc9;
+    @FXML private Button bc10;
+    @FXML private Button bc11;
+    @FXML private Button bc12;
+    @FXML private Button bc13;
+    @FXML private Button bc14;
+    @FXML private Button bc15;
+    @FXML private Button bc16;
+    @FXML private Button bc17;
+    @FXML private Button bc18;
+    @FXML private Button bc19;
+    @FXML private Button bc20;
+    @FXML private Button bc21;
+    @FXML private Button bc22;
+    @FXML private Button bc23;
+    @FXML private Button bc24;
+    @FXML private Button bc25;
+    @FXML private Button bc26;
+    @FXML private Button bc27;
+    @FXML private Button bc28;
+    @FXML private Button bc29;
+    @FXML private Button bc30;
+    @FXML private Button bc31;
+    @FXML private Button bc32;
+    @FXML private Button bc33;
+    @FXML private Button bc34;
+    @FXML private Button bc35;
+    @FXML private Button bc36;
+    @FXML private Button bc37;
+    @FXML private Button bc38;
+    @FXML private Button bc39;
+    @FXML private Button bc40;
+    @FXML private Button bc41;
+    @FXML private Button bc42;
+    @FXML private ScrollPane eventsList;
 
     private Group selectedGroup;
 
@@ -118,8 +155,7 @@ public class ProgramController {
         refrestGroupsData();
     }
 
-    @FXML
-    private void addUser() throws SQLException {
+    @FXML private void addUser() throws SQLException {
         TextInputDialog inputText = new TextInputDialog();
         inputText.setTitle("");
         inputText.setHeaderText("Dodawanie nowego użytkownika");
@@ -164,8 +200,7 @@ public class ProgramController {
         displayUsersInGroup(selectedGroup.id);
     }
 
-    @FXML
-    private void removeUser() throws SQLException {
+    @FXML private void removeUser() throws SQLException {
         String inputUserName = usersList.getSelectionModel().getSelectedItem();
 
         String query = String.format("SELECT id FROM employees WHERE CONCAT(name, ' ', surname) = '%s'", inputUserName);
@@ -261,6 +296,28 @@ public class ProgramController {
     }
 
     // ================================================================
+    // Zarządzanie Kalendarzem
+    // ================================================================
+
+    @FXML private void subtractMonth() throws ParseException {
+        calendar.subtractMonth();
+        calendar.clearDay();
+        refreshCalendarData();
+    }
+
+    @FXML private void addMonth() throws ParseException {
+        calendar.addMonth();
+        calendar.clearDay();
+        refreshCalendarData();
+    }
+
+    @FXML private void displayEvents(ActionEvent ae) throws ParseException {
+        int day = Integer.parseInt(((Button)ae.getSource()).getText());
+        calendar.setDay(day);
+        refreshCalendarData();
+    }
+
+    // ================================================================
     // Aktualizacja zawartości zakładek
     // ================================================================
     private void displayUsersInGroup(int groupId) throws SQLException {
@@ -270,8 +327,7 @@ public class ProgramController {
             usersList.getItems().add(user);
         }
     }
-    @FXML
-    private void refrestGroupsData() {
+    @FXML private void refrestGroupsData() {
         groupsList.getItems().clear();
 
         for(Group group : user.userGroups) {
@@ -308,8 +364,7 @@ public class ProgramController {
         });
     }
 
-    @FXML
-    private void refreshToDoData() {
+    @FXML private void refreshToDoData() {
         toDoGroup.getItems().clear();
         for(Group group : user.userGroups) {
             toDoGroup.getItems().add(group.name);
@@ -374,5 +429,42 @@ public class ProgramController {
 
             }
         });
+    }
+
+    @FXML private void refreshCalendarData() throws ParseException {
+        List <Button> buttons = Arrays.asList(bc1, bc2, bc3, bc4, bc5, bc6, bc7, bc8, bc9, bc10, bc11, bc12, bc13, bc14, bc15, bc16, bc17, bc18, bc19, bc20, bc21, bc22, bc23, bc24, bc25, bc26, bc27, bc28, bc29, bc30, bc31, bc32, bc33, bc34, bc35, bc36, bc37, bc38, bc39, bc40, bc41, bc42);
+
+        if(calendar == null) {
+            calendar = new Cal();
+        }
+
+        int i = 1;
+        int day = 1;
+        int firstDay = calendar.getFirstDayNumber();
+        int days = calendar.getLengthOfMonth();
+        for(Button button : buttons) {
+
+            if(day <= days && i >= firstDay) {
+
+                if(day == calendar.getDay()) {
+                    button.setStyle("-fx-background-color: lightBlue;");
+                }
+                else {
+                    button.setStyle("-fx-background-color: none;");
+                }
+
+                button.setDisable(false);
+                button.setText(Integer.toString(day));
+                day += 1;
+            }
+            else {
+                button.setDisable(true);
+                button.setText(" ");
+            }
+            i += 1;
+        }
+
+        calendarMonth.setText(calendar.getMonth());
+        calendarYear.setText(calendar.getYear());
     }
 }
