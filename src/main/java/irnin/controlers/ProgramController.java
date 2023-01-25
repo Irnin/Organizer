@@ -455,7 +455,7 @@ public class ProgramController {
             calendar = new Cal();
         }
 
-        if(calendar.getDay() != -1) {
+        if(calendar.getDay() != 0) {
             events = getCalendarEventsForUser(user, calendar.getDate());
 
             for(CalendarEvent event : events) {
