@@ -8,6 +8,8 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,43 +19,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="irnin.controlers.ProgramController">
    <children>
-      <TabPane prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="38.0" prefHeight="401.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Organizer">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#logOut" text="Log out" />
-                        <Button layoutX="83.0" layoutY="14.0" mnemonicParsing="false" onAction="#exit" text="Exit" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab onSelectionChanged="#refrestGroupsData" text="Grupy">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ListView fx:id="groupsList" layoutX="14.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
-                        <Label fx:id="groupNameLabel" layoutX="441.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Opcje:" />
-                        <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="67.0" text="Grupy:" />
-                        <ListView fx:id="usersList" layoutX="225.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
-                        <Label layoutX="225.0" layoutY="14.0" text="Użytkownicy:" />
-                        <VBox layoutX="441.0" layoutY="40.0" prefHeight="311.0" prefWidth="142.0" spacing="5.0">
-                           <children>
-                              <Button fx:id="addGroup" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="146.0" text="Dodaj grupę" />
-                              <Button fx:id="removeGroup" disable="true" mnemonicParsing="false" onAction="#removeGroup" prefHeight="26.0" prefWidth="146.0" text="Usuń grupę" />
-                              <Separator prefWidth="200.0" />
-                              <Button fx:id="addUser" disable="true" mnemonicParsing="false" onAction="#addUser" prefHeight="26.0" prefWidth="146.0" text="Dodaj użytkownika" />
-                              <Button fx:id="removeUser" disable="true" mnemonicParsing="false" onAction="#removeUser" prefHeight="26.0" prefWidth="146.0" text="Usuń użytkownika" />
-                              <Separator prefWidth="200.0" />
-                              <Button fx:id="leftGroup" disable="true" mnemonicParsing="false" onAction="#leftGroup" prefHeight="26.0" prefWidth="146.0" text="Opuść grupę" />
-                           </children>
-                        </VBox>
-                     </children></AnchorPane>
-            </content>
-          </Tab>
             <Tab onSelectionChanged="#refreshToDoData" text="Lista">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -161,12 +130,10 @@
                               <Button fx:id="bc42" alignment="CENTER" mnemonicParsing="false" onAction="#displayEvents" prefHeight="26.0" prefWidth="61.0" style="-fx-text-alignment: RIGHT;" stylesheets="@calendar.css" text="42" GridPane.columnIndex="6" GridPane.rowIndex="6" />
                            </children>
                         </GridPane>
-                        <HBox layoutX="14.0" layoutY="274.0" prefHeight="81.0" prefWidth="340.0">
-                           <children>
-                              <Button mnemonicParsing="false" text="Dodaj wydarzenie" />
-                           </children>
-                        </HBox>
-                        <ScrollPane fx:id="eventsList" hbarPolicy="NEVER" layoutX="386.0" layoutY="18.0" prefHeight="344.0" prefWidth="200.0" vbarPolicy="ALWAYS" />
+                        <ScrollPane hbarPolicy="NEVER" layoutX="386.0" layoutY="18.0" prefHeight="344.0" prefWidth="200.0" style="-fx-background-color: transparent;">
+                           <content>
+                              <VBox fx:id="eventsList" prefHeight="343.0" prefWidth="184.0" spacing="5.0" />
+                           </content></ScrollPane>
                         <Button layoutX="14.0" layoutY="16.0" mnemonicParsing="false" onAction="#subtractMonth" text="&lt;=" />
                         <Button layoutX="338.0" layoutY="16.0" mnemonicParsing="false" onAction="#addMonth" text="=&gt;" />
                         <HBox alignment="CENTER" layoutX="85.0" layoutY="14.0" prefHeight="25.0" prefWidth="200.0" spacing="5.0">
@@ -183,11 +150,49 @@
                               </Label>
                            </children>
                         </HBox>
+                        <Pane fx:id="createNewEvent" layoutX="14.0" layoutY="262.0" prefHeight="83.0" prefWidth="369.0">
+                           <children>
+                              <Button fx:id="calendarAddEvent" layoutX="240.0" layoutY="43.0" mnemonicParsing="false" onAction="#addEvent" text="Dodaj wydarzenie" />
+                              <TextField fx:id="CalendarSubject" layoutX="71.0" layoutY="43.0" />
+                              <ComboBox fx:id="calendarGroup" layoutX="72.0" layoutY="10.0" prefHeight="26.0" prefWidth="158.0" />
+                              <Label layoutX="13.0" layoutY="48.0" text="Nazwa" />
+                              <Label layoutX="14.0" layoutY="14.0" text="Grupa:" />
+                           </children>
+                        </Pane>
                      </children>
                   </AnchorPane>
                </content>
             </Tab>
+          <Tab onSelectionChanged="#refrestGroupsData" text="Zarządzanie grupamy">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="groupsList" layoutX="14.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
+                        <Label fx:id="groupNameLabel" layoutX="441.0" layoutY="14.0" prefHeight="17.0" prefWidth="375.0" text="Opcje:" />
+                        <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="67.0" text="Grupy:" />
+                        <ListView fx:id="usersList" layoutX="225.0" layoutY="40.0" prefHeight="313.0" prefWidth="200.0" />
+                        <Label layoutX="225.0" layoutY="14.0" text="Użytkownicy:" />
+                        <VBox layoutX="441.0" layoutY="40.0" prefHeight="311.0" prefWidth="142.0" spacing="5.0">
+                           <children>
+                              <Button fx:id="addGroup" mnemonicParsing="false" onAction="#addGroup" prefHeight="26.0" prefWidth="146.0" text="Dodaj grupę" />
+                              <Button fx:id="removeGroup" disable="true" mnemonicParsing="false" onAction="#removeGroup" prefHeight="26.0" prefWidth="146.0" text="Usuń grupę" />
+                              <Separator prefWidth="200.0" />
+                              <Button fx:id="addUser" disable="true" mnemonicParsing="false" onAction="#addUser" prefHeight="26.0" prefWidth="146.0" text="Dodaj użytkownika" />
+                              <Button fx:id="removeUser" disable="true" mnemonicParsing="false" onAction="#removeUser" prefHeight="26.0" prefWidth="146.0" text="Usuń użytkownika" />
+                              <Separator prefWidth="200.0" />
+                              <Button fx:id="leftGroup" disable="true" mnemonicParsing="false" onAction="#leftGroup" prefHeight="26.0" prefWidth="146.0" text="Opuść grupę" />
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
         </tabs>
       </TabPane>
+      <ToolBar prefHeight="40.0" prefWidth="600.0">
+         <items>
+            <Button mnemonicParsing="false" onAction="#logOut" text="Log out" />
+            <Button mnemonicParsing="false" onAction="#exit" text="Exit" />
+         </items>
+      </ToolBar>
    </children>
 </Pane>

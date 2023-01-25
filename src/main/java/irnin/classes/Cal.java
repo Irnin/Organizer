@@ -1,13 +1,9 @@
 package irnin.classes;
 
-import java.net.InterfaceAddress;
-import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Cal {
     private int month;
@@ -119,6 +115,10 @@ public class Cal {
     }
 
     public void clearDay() {
-        this.day = -1;
+        this.day = 0;
+    }
+
+    public String getDate() {
+        return String.format("%d-%02d-%02d", year, month, day);
     }
 }

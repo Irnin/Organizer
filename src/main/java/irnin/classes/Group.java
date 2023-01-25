@@ -49,10 +49,13 @@ public class Group {
         String query = String.format("DELETE FROM groupAssignment WHERE groupId = %d", id);
         QueryExecutor.executeQuery(query);
 
-        query = String.format("DELETE FROM groups WHERE id = %d", id);
+        query = String.format("DELETE FROM toDoList WHERE groupId = %d", id);
         QueryExecutor.executeQuery(query);
 
-        query = String.format("DELETE FROM toDoList WHERE groupId = %d", id);
+        query = String.format("DELETE FROM calendarEvents WHERE groupId = %d", id);
+        QueryExecutor.executeQuery(query);
+
+        query = String.format("DELETE FROM groups WHERE id = %d", id);
         QueryExecutor.executeQuery(query);
     }
 
@@ -72,8 +75,8 @@ public class Group {
         }
     }
 
-    public List<toDo> getToDos() throws SQLException {
-        List<toDo> toDos = new ArrayList<toDo>();
+    public List<ToDoItem> getToDos() throws SQLException {
+        List<ToDoItem> ToDoItems = new ArrayList<ToDoItem>();
 
         String query = String.format("SELECT * FROM toDoList WHERE groupId = %d", id);
         ResultSet RS = QueryExecutor.executeSelect(query);
@@ -88,14 +91,27 @@ public class Group {
             int completedBy = RS.getInt("completedBy");
             String completedDate = RS.getString("completedDate");
 
-            toDos.add(new toDo(id, groupId, subject, status, completedBy, completedDate));
+            ToDoItems.add(new ToDoItem(id, groupId, subject, status, completedBy, completedDate));
         }
 
-        return toDos;
+        return ToDoItems;
     }
 
     public void addToDoItem(String subject) {
         String query = String.format("INSERT INTO toDoList VALUES (null, %d, '%s', 'w trakcie', null, null)", id, subject);
         QueryExecutor.executeQuery(query);
+    }
+
+    public static int getGroupId(String groupName) throws SQLException {
+        String query = String.format("SELECT id FROM groups WHERE name = '%s'", groupName);
+        ResultSet RS = QueryExecutor.executeSelect(query);
+        RS.last();
+
+        if(RS.getRow() == 1) {
+            RS.first();
+            return RS.getInt("id");
+        }
+
+        return -1;
     }
 }

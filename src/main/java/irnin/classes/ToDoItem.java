@@ -5,7 +5,7 @@ import irnin.organizer.QueryExecutor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class toDo {
+public class ToDoItem {
     int id;
     int groupId;
     String subject;
@@ -13,7 +13,7 @@ public class toDo {
     int completedBy;
     String completedDate;
 
-    public toDo(int id, int groupId, String subject, String status, int completedBy, String completedDate) {
+    public ToDoItem(int id, int groupId, String subject, String status, int completedBy, String completedDate) {
         this.id = id;
         this.groupId = groupId;
         this.subject = subject;

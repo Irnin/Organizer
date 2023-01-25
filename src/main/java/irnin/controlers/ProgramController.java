@@ -1,9 +1,6 @@
 package irnin.controlers;
 
-import irnin.classes.Cal;
-import irnin.classes.Group;
-import irnin.classes.User;
-import irnin.classes.toDo;
+import irnin.classes.*;
 import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -11,16 +8,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static irnin.classes.CalendarEvent.getCalendarEventsForUser;
 
 public class ProgramController {
     @FXML private ListView<String> groupsList;
@@ -86,7 +83,13 @@ public class ProgramController {
     @FXML private Button bc40;
     @FXML private Button bc41;
     @FXML private Button bc42;
-    @FXML private ScrollPane eventsList;
+    @FXML private VBox eventsList;
+    @FXML private TextField CalendarSubject;
+    @FXML private ComboBox calendarGroup;
+    @FXML private Pane createNewEvent;
+    @FXML private Button calendarAddEvent;
+
+    List<CalendarEvent> events;
 
     private Group selectedGroup;
 
@@ -102,6 +105,7 @@ public class ProgramController {
     public void setMainController(MainController mainController, User user) {
         this.mainController = mainController;
         this.user = user;
+        refreshToDoData();
     }
 
     // ================================================================
@@ -242,12 +246,12 @@ public class ProgramController {
     // ================================================================
 
     public void toDoDisplayLists() throws SQLException {
-        List<toDo> list = selectedGroup.getToDos();
+        List<ToDoItem> list = selectedGroup.getToDos();
 
         toDoItemsListComplete.getItems().clear();
         toDoItemsList.getItems().clear();
 
-        for(toDo item : list) {
+        for(ToDoItem item : list) {
             if(item.isComplete()) {
                 toDoItemsListComplete.getItems().add(item.getSubject());
             }
@@ -285,13 +289,13 @@ public class ProgramController {
 
     public void removeToDoItem() {
         String itemName = toDoItemsList.getSelectionModel().getSelectedItem();
-        toDo.removeItem(selectedGroup.id, itemName);
+        ToDoItem.removeItem(selectedGroup.id, itemName);
         refreshToDoData();
     }
 
     public void markToDoItemComplete() {
         String itemName = toDoItemsList.getSelectionModel().getSelectedItem();
-        toDo.markItemAsComplete(selectedGroup.id, itemName, user.id);
+        ToDoItem.markItemAsComplete(selectedGroup.id, itemName, user.id);
         refreshToDoData();
     }
 
@@ -299,21 +303,26 @@ public class ProgramController {
     // Zarządzanie Kalendarzem
     // ================================================================
 
-    @FXML private void subtractMonth() throws ParseException {
+    @FXML private void subtractMonth() throws ParseException, SQLException {
         calendar.subtractMonth();
         calendar.clearDay();
         refreshCalendarData();
     }
 
-    @FXML private void addMonth() throws ParseException {
+    @FXML private void addMonth() throws ParseException, SQLException {
         calendar.addMonth();
         calendar.clearDay();
         refreshCalendarData();
     }
 
-    @FXML private void displayEvents(ActionEvent ae) throws ParseException {
+    @FXML private void displayEvents(ActionEvent ae) throws ParseException, SQLException {
         int day = Integer.parseInt(((Button)ae.getSource()).getText());
         calendar.setDay(day);
+        refreshCalendarData();
+    }
+
+    @FXML private void addEvent() throws SQLException, ParseException {
+        //CalendarEvent.addEvent(user, calendar.getDate());
         refreshCalendarData();
     }
 
@@ -365,6 +374,11 @@ public class ProgramController {
     }
 
     @FXML private void refreshToDoData() {
+
+        if(user == null) {
+            return;
+        }
+
         toDoGroup.getItems().clear();
         for(Group group : user.userGroups) {
             toDoGroup.getItems().add(group.name);
@@ -418,8 +432,8 @@ public class ProgramController {
                 String itemName = toDoItemsListComplete.getSelectionModel().getSelectedItem();
 
                 try {
-                    String createdDate = toDo.getCompletedDate(selectedGroup.id, itemName);
-                    String createdBy = toDo.getCompletedUserName(selectedGroup.id, itemName);
+                    String createdDate = ToDoItem.getCompletedDate(selectedGroup.id, itemName);
+                    String createdBy = ToDoItem.getCompletedUserName(selectedGroup.id, itemName);
 
                     completedBy.setText(createdBy);
                     CompletedDate.setText(createdDate);
@@ -431,11 +445,22 @@ public class ProgramController {
         });
     }
 
-    @FXML private void refreshCalendarData() throws ParseException {
+    public void refreshCalendarData() throws ParseException, SQLException {
         List <Button> buttons = Arrays.asList(bc1, bc2, bc3, bc4, bc5, bc6, bc7, bc8, bc9, bc10, bc11, bc12, bc13, bc14, bc15, bc16, bc17, bc18, bc19, bc20, bc21, bc22, bc23, bc24, bc25, bc26, bc27, bc28, bc29, bc30, bc31, bc32, bc33, bc34, bc35, bc36, bc37, bc38, bc39, bc40, bc41, bc42);
+
+        eventsList.getChildren().clear();
+        calendarGroup.getItems().clear();
 
         if(calendar == null) {
             calendar = new Cal();
+        }
+
+        if(calendar.getDay() != -1) {
+            events = getCalendarEventsForUser(user, calendar.getDate());
+
+            for(CalendarEvent event : events) {
+                eventsList.getChildren().add(event.getEventView());
+            }
         }
 
         int i = 1;
@@ -444,13 +469,12 @@ public class ProgramController {
         int days = calendar.getLengthOfMonth();
         for(Button button : buttons) {
 
+            button.setStyle("-fx-background-color: none;");
+
             if(day <= days && i >= firstDay) {
 
                 if(day == calendar.getDay()) {
                     button.setStyle("-fx-background-color: lightBlue;");
-                }
-                else {
-                    button.setStyle("-fx-background-color: none;");
                 }
 
                 button.setDisable(false);
@@ -464,7 +488,18 @@ public class ProgramController {
             i += 1;
         }
 
+        for(Group group : user.userGroups) {
+            calendarGroup.getItems().add(group.name);
+        }
+
         calendarMonth.setText(calendar.getMonth());
         calendarYear.setText(calendar.getYear());
+
+        if(calendar.getDay() != 0) {
+            createNewEvent.setDisable(false);
+        }
+        else {
+            createNewEvent.setDisable(true);
+        }
     }
 }

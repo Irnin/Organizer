@@ -49,22 +49,16 @@ public class LoginController {
     }
 
     @FXML
-    public void onEnter(ActionEvent ae){
+    public void onEnter(ActionEvent ae) throws SQLException {
         login(ae);
     }
 
     @FXML
-    void login(ActionEvent e) {
+    void login(ActionEvent e) throws SQLException {
         Connection connection = null;
 
         String userLogin = email.getText();
         String userPassword = hash(password.getText());
-
-        try {
-            String query = "SELECT * FROM employees WHERE userName = '" + userLogin + "' AND password = '" + userPassword + "'";
-            ResultSet result = QueryExecutor.executeSelect(query);
-
-            result.next();
 
             User user = new User(userLogin, userPassword);
 
@@ -79,10 +73,6 @@ public class LoginController {
                 IOe.printStackTrace();
             }
 
-        } catch (SQLException er) {
-            loginInfo.setText("Incorrect Login");
-            er.printStackTrace();
-        }
     }
 
     public void setMainController(MainController mainController) {

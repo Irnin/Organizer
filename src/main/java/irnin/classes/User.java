@@ -17,15 +17,13 @@ public class User {
 
     public List<Group> userGroups;
 
-    private void getUsersGroups() throws SQLException {
-        Connection connection = null;
-
+    private void reloadUsersGroups() throws SQLException {
         String query = "SELECT g.id, g.name, g.ownerId FROM groupAssignment ga JOIN groups g ON ga.groupId = g.id WHERE ga.employeeId = " + id;
-
         ResultSet result = QueryExecutor.executeSelect(query);
 
         result.beforeFirst();
 
+        userGroups.clear();
         while(result.next()) {
             int groupId = result.getInt("id");
             String groupName = result.getString("name");
@@ -33,6 +31,11 @@ public class User {
 
             userGroups.add(new Group(groupId, groupName, groupOwnerId));
         }
+    }
+
+    public List<Group> getUserGroups() throws SQLException {
+        reloadUsersGroups();
+        return userGroups;
     }
 
     public User(String userName, String hashedPassword) throws SQLException {
@@ -50,6 +53,6 @@ public class User {
         this.email = result.getString("email");
 
         userGroups = new ArrayList<Group>();
-        getUsersGroups();
+        reloadUsersGroups();
     }
 }
