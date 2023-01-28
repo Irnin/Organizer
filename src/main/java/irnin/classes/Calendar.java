@@ -3,14 +3,13 @@ package irnin.classes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.YearMonth;
-import java.util.Calendar;
 
-public class Cal {
+public class Calendar {
     private int month;
     private int year;
     private int day;
 
-    public Cal()
+    public Calendar()
     {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         month = Integer.parseInt(new SimpleDateFormat("M").format(cal.getTime()));
@@ -94,10 +93,10 @@ public class Cal {
 
         String dt = String.format("%d-%02d-01", year, month);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
+        java.util.Calendar c = java.util.Calendar.getInstance();
         c.setTime(sdf.parse(dt));
 
-        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+        int day = c.get(java.util.Calendar.DAY_OF_WEEK) - 1;
 
         if(day == 0) {
             day = 7;

@@ -20,6 +20,7 @@ public class Main extends Application {
         StackPane stackPane = fxmlLoader.load();
         Scene scene = new Scene(stackPane);
         stage.setTitle("Organizer");
+        stage.setHeight(470);
         stage.setScene(scene);
         stage.show();
     }

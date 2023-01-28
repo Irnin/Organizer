@@ -1,6 +1,7 @@
 package irnin.controlers;
 
 import irnin.classes.*;
+import irnin.classes.Calendar;
 import irnin.organizer.QueryExecutor;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -31,7 +32,7 @@ public class ProgramController {
     @FXML private Button markToDoItemComplete;
     @FXML private Button removeUser;
     @FXML private Button leftGroup;
-    @FXML private ComboBox toDoGroup;
+    @FXML private ComboBox groupComboBox;
     @FXML private Label completedBy;
     @FXML private Label CompletedDate;
     @FXML private Label calendarMonth;
@@ -39,7 +40,7 @@ public class ProgramController {
     @FXML private VBox toDoInformation;
     private MainController mainController;
     public User user;
-    private Cal calendar;
+    private Calendar calendar;
 
     @FXML private Button bc1;
     @FXML private Button bc2;
@@ -322,7 +323,8 @@ public class ProgramController {
     }
 
     @FXML private void addEvent() throws SQLException, ParseException {
-        //CalendarEvent.addEvent(user, calendar.getDate());
+        String calendarSubject = CalendarSubject.getText();
+        CalendarEvent.addEvent(selectedGroup.id, calendar.getDate(), calendarSubject);
         refreshCalendarData();
     }
 
@@ -373,27 +375,34 @@ public class ProgramController {
         });
     }
 
+    private void refreshGroupComboBox() {
+        groupComboBox.getItems().clear();
+        for(Group group : user.userGroups) {
+            groupComboBox.getItems().add(group.name);
+        }
+
+        if(selectedGroup != null) {
+            groupComboBox.setValue(selectedGroup.name);
+        }
+    }
+
     @FXML private void refreshToDoData() {
 
         if(user == null) {
             return;
         }
 
-        toDoGroup.getItems().clear();
-        for(Group group : user.userGroups) {
-            toDoGroup.getItems().add(group.name);
-        }
+        refreshGroupComboBox();
 
         if(selectedGroup != null) {
-            toDoGroup.setValue(selectedGroup.name);
             addToDoItem.setDisable(false);
         }
         else {
             addToDoItem.setDisable(true);
         }
 
-        toDoGroup.setOnAction((event) -> {
-            getGroupDetail((String)toDoGroup.getValue());
+        groupComboBox.setOnAction((event) -> {
+            getGroupDetail((String) groupComboBox.getValue());
             toDoItemsList.getSelectionModel().clearSelection();
             toDoItemsListComplete.getSelectionModel().clearSelection();
 
@@ -409,7 +418,6 @@ public class ProgramController {
             }
         });
 
-        // Kliknięcie na item nie kompletny
         toDoItemsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
@@ -421,7 +429,6 @@ public class ProgramController {
             }
         });
 
-        // Kliknięcie na item nie kompletny
         toDoItemsListComplete.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
@@ -440,7 +447,6 @@ public class ProgramController {
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         });
     }
@@ -448,11 +454,12 @@ public class ProgramController {
     public void refreshCalendarData() throws ParseException, SQLException {
         List <Button> buttons = Arrays.asList(bc1, bc2, bc3, bc4, bc5, bc6, bc7, bc8, bc9, bc10, bc11, bc12, bc13, bc14, bc15, bc16, bc17, bc18, bc19, bc20, bc21, bc22, bc23, bc24, bc25, bc26, bc27, bc28, bc29, bc30, bc31, bc32, bc33, bc34, bc35, bc36, bc37, bc38, bc39, bc40, bc41, bc42);
 
+        refreshGroupComboBox();
         eventsList.getChildren().clear();
-        calendarGroup.getItems().clear();
+        createNewEvent.setDisable(true);
 
         if(calendar == null) {
-            calendar = new Cal();
+            calendar = new Calendar();
         }
 
         if(calendar.getDay() != 0) {
@@ -488,14 +495,10 @@ public class ProgramController {
             i += 1;
         }
 
-        for(Group group : user.userGroups) {
-            calendarGroup.getItems().add(group.name);
-        }
-
         calendarMonth.setText(calendar.getMonth());
         calendarYear.setText(calendar.getYear());
 
-        if(calendar.getDay() != 0) {
+        if(calendar.getDay() != 0 && selectedGroup != null) {
             createNewEvent.setDisable(false);
         }
         else {

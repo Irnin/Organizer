@@ -20,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
@@ -36,6 +37,11 @@ public class CalendarEvent {
         this.subject = subject;
         this.date = date;
         edited = false;
+    }
+
+    public static void addEvent(int groupId, String date, String subject) {
+        String query = String.format("INSERT into calendarEvents VALUES (null, %d, '%s', '%s')", groupId, subject, date);
+        QueryExecutor.executeQuery(query);
     }
 
     public String getSubject() {
@@ -101,6 +107,10 @@ public class CalendarEvent {
         Label details = new Label(groupName);
         Button removeEvent = new Button("Usuń");
         Button editEvent = new Button("Edytuj");
+        HBox optionsGroup = new HBox();
+        optionsGroup.setSpacing(10);
+
+        optionsGroup.getChildren().addAll(removeEvent, editEvent);
 
         removeEvent.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -116,8 +126,7 @@ public class CalendarEvent {
 
         view.getChildren().add(subjectView);
         view.getChildren().add(details);
-        view.getChildren().add(removeEvent);
-        view.getChildren().add(editEvent);
+        view.getChildren().add(optionsGroup);
 
         view.setStyle("-fx-background-color: lightBlue; -fx-padding: 5;");
 
